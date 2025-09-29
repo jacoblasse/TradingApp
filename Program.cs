@@ -22,7 +22,7 @@ while (running)
   IUser? active_user;
 
   //Meny val 
-  Console.Write("1. Logga in\n2. Glömt lösenord?\n3. Quit\n");
+  Console.Write("1. Logga in\n2. Glömt lösenord?\n3. Skapa en konto\n4. Avsluta\n");
 
   //Skapar switch:case för att användaren ska kunna använda menyn.
   switch (Console.ReadLine())
@@ -30,13 +30,28 @@ while (running)
 
     case "1":
       //Kallar på Login() en funktion som loggar in användaren. Ifall användaren loggar in så sparas användarens information i active_user.
+
       active_user = user.Login();
-      if (active_user != null)
+
+      while (active_user != null)
       {
-        while (running)
+        Console.Clear();
+        Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta");
+        switch (Console.ReadLine())
         {
-          Console.Clear();
-          Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta");
+          case "1":
+
+            break;
+
+          case "4":
+            active_user = null;
+
+            break;
+
+          case "5":
+            active_user = null;
+            running = false;
+            break;
         }
       }
       break;
@@ -46,7 +61,7 @@ while (running)
       break;
 
     case "3":
-
+      running = false;
       break;
   }
 }
