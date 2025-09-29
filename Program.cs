@@ -31,7 +31,14 @@ while (running)
     case "1":
       //Kallar på Login() en funktion som loggar in användaren. Ifall användaren loggar in så sparas användarens information i active_user.
       active_user = user.Login();
-
+      if (active_user != null)
+      {
+        while (running)
+        {
+          Console.Clear();
+          Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta");
+        }
+      }
       break;
 
     case "2":
