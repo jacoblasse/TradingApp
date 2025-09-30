@@ -36,7 +36,7 @@ while (running)
       while (active_user != null)
       {
         Console.Clear();
-        Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta");
+        Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta\n6. Lägg till items");
         switch (Console.ReadLine())
         {
           case "1":
@@ -52,6 +52,12 @@ while (running)
             active_user = null;
             running = false;
             break;
+
+          case "6":
+            user.AddItem();
+
+            user.ShowItems();
+            break;
         }
       }
       break;
@@ -60,8 +66,17 @@ while (running)
 
       break;
 
+
     case "3":
+      user.MakeAccount();
+
+      break;
+
+
+    case "4":
       running = false;
       break;
+
+
   }
 }

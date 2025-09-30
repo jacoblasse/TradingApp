@@ -3,6 +3,7 @@ namespace App;
 public class TradeSystem
 {
   public List<IUser> users = new List<IUser>();
+  public List<Item> items = new List<Item>();
 
   public TradeSystem()
   {
@@ -41,5 +42,47 @@ public class TradeSystem
       }
     }
     return null;
+  }
+
+  public void MakeAccount()
+  {
+    string name;
+    string email;
+    string _password;
+
+    Console.Write("Namn: ");
+    name = Console.ReadLine();
+
+    Console.Write("Email: ");
+    email = Console.ReadLine();
+
+    _password = Console.ReadLine();
+
+    users.Add(new User(name, email, _password));
+
+  }
+
+  public void AddItem()
+  {
+    string name;
+    string description;
+
+    Console.Write("Namn på ditt Item: ");
+    name = Console.ReadLine();
+
+    Console.Write("Skriv en beskrivning om ditt Item: ");
+    description = Console.ReadLine();
+
+    items.Add(new Item(name, description));
+
+  }
+
+  public void ShowItems()
+  {
+    foreach (Item item in items)
+    {
+      Console.WriteLine(item.Name + item.Description);
+    }
+    Console.ReadKey(true);
   }
 }
