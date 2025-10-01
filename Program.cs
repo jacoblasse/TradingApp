@@ -43,6 +43,9 @@ while (running)
             user.ShowMyItems(active_user);
             Console.ReadKey(true);
             break;
+          case "2":
+            user.ShowItems();
+            break;
 
           case "4":
             active_user = null;

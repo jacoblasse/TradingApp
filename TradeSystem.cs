@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace App;
 
 public class TradeSystem
@@ -8,6 +10,7 @@ public class TradeSystem
   public TradeSystem()
   {
     users.Add(new User("Jacob", "jake@", "pass"));
+    items.Add(new Item("Vit Ps5", "Ett vit ps5, köpt när det kom ut", "Kevv@"));
   }
 
   //Inloggings funktion, gör så att användaren kan logga in på sitt konto.
@@ -82,21 +85,27 @@ public class TradeSystem
 
   public void ShowItems()
   {
+    Console.Clear();
+    int i = 0;
     foreach (Item item in items)
     {
-      Console.WriteLine(item.Name + item.Description + item.Owner);
+      i += 1;
+      Console.WriteLine("[" + i + "] " + item.Name + "\n" + item.Description + "    " + item.Owner);
     }
     Console.ReadKey(true);
   }
 
   public void ShowMyItems(IUser? active_user)
   {
+    int i = 0;
     foreach (Item item in items)
     {
       if (active_user is User u && item.Owner == u.Email)
       {
-        Console.WriteLine(item.Name + " " + item.Description);
+        i += 1;
+        Console.WriteLine($"[{i}]\n{item.Name} \n{item.Description}");
       }
+      else Console.WriteLine("Du har inga items på din profil\n Lägg till nya items?");
     }
   }
 }
