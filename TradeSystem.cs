@@ -88,4 +88,15 @@ public class TradeSystem
     }
     Console.ReadKey(true);
   }
+
+  public void ShowMyItems(IUser? active_user)
+  {
+    foreach (Item item in items)
+    {
+      if (active_user is User u && item.Owner == u.Email)
+      {
+        Console.WriteLine(item.Name + " " + item.Description);
+      }
+    }
+  }
 }

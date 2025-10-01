@@ -40,7 +40,8 @@ while (running)
         switch (Console.ReadLine())
         {
           case "1":
-
+            user.ShowMyItems(active_user);
+            Console.ReadKey(true);
             break;
 
           case "4":
