@@ -62,18 +62,21 @@ public class TradeSystem
 
   }
 
-  public void AddItem()
+  public void AddItem(IUser? active_user)
   {
     string name;
     string description;
+    if (active_user is User u)
+    {
+      Console.Write("Namn på ditt Item: ");
+      name = Console.ReadLine();
 
-    Console.Write("Namn på ditt Item: ");
-    name = Console.ReadLine();
+      Console.Write("Skriv en beskrivning om ditt Item: ");
+      description = Console.ReadLine();
 
-    Console.Write("Skriv en beskrivning om ditt Item: ");
-    description = Console.ReadLine();
+      items.Add(new Item(name, description, u.Email));
+    }
 
-    items.Add(new Item(name, description));
 
   }
 
@@ -81,7 +84,7 @@ public class TradeSystem
   {
     foreach (Item item in items)
     {
-      Console.WriteLine(item.Name + item.Description);
+      Console.WriteLine(item.Name + item.Description + item.Owner);
     }
     Console.ReadKey(true);
   }

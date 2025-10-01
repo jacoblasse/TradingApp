@@ -6,9 +6,12 @@ public class Item
 
   public string Description;
 
-  public Item(string name, string description)
+  public string Owner;
+
+  public Item(string name, string description, string owner)
   {
     Name = name;
     Description = description;
+    Owner = owner;
   }
 }

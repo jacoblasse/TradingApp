@@ -54,7 +54,7 @@ while (running)
             break;
 
           case "6":
-            user.AddItem();
+            user.AddItem(active_user);
 
             user.ShowItems();
             break;
