@@ -45,6 +45,7 @@ while (running)
             break;
           case "2":
             user.ShowItems();
+            user.MakeTrade(active_user);
             break;
 
           case "4":

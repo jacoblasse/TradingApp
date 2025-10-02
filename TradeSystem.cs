@@ -7,6 +7,8 @@ public class TradeSystem
   public List<IUser> users = new List<IUser>();
   public List<Item> items = new List<Item>();
 
+  public List<Trade> trades = new List<Trade>();
+
   public TradeSystem()
   {
     users.Add(new User("Jacob", "jake@", "pass"));
@@ -107,5 +109,83 @@ public class TradeSystem
       }
       else Console.WriteLine("Du har inga items på din profil\n Lägg till nya items?");
     }
+  }
+
+  public void MakeTrade(IUser? active_user)
+  {
+    if (active_user is not User u)
+    {
+      Console.WriteLine("Du måste vara inloggad för att göra en trade");
+      return;
+    }
+
+    List<Item> otheritems = new List<Item>();
+    foreach (Item item in items)
+    {
+      if (item.Owner != u.Email)
+      {
+        otheritems.Add(item);
+      }
+    }
+
+    if (otheritems.Count == 0)
+    {
+      Console.WriteLine("Det finns inga items att byta just nu");
+      return;
+    }
+
+    Console.WriteLine("Välj ett item att byta till");
+    for (int i = 0; i < otheritems.Count; i++)
+    {
+      Console.WriteLine($"[{i + 1}] {otheritems[i].Name} - {otheritems[i].Description} (Ägare: {otheritems[i].Owner})");
+    }
+
+    string input = Console.ReadLine();
+    int itemChoice;
+    if (!int.TryParse(input, out itemChoice) || itemChoice < 1 || itemChoice > otheritems.Count)
+    {
+      Console.WriteLine("Oglitligt val.");
+      return;
+    }
+
+    Item chosenItem = otheritems[itemChoice - 1];
+
+    List<Item> myItems = new List<Item>();
+    foreach (Item item in items)
+      if (item.Owner == u.Email)
+      {
+        myItems.Add(item);
+      }
+
+    if (myItems.Count == 0)
+    {
+      Console.WriteLine("Du har inga items att byta");
+      return;
+    }
+
+    Console.WriteLine("Välj ett av dina items att erbjuda i bytet: ");
+    for (int i = 0; i < myItems.Count; i++)
+    {
+      Console.WriteLine($"[{i + 1}] {myItems[i].Name} - {myItems[i].Description}");
+    }
+
+    input = Console.ReadLine();
+    int myItemChoice;
+    if (!int.TryParse(input, out myItemChoice) || myItemChoice < 1 || myItemChoice > myItems.Count)
+    {
+      Console.WriteLine("Ogiltligt val");
+      return;
+    }
+    Item offeredItem = myItems[myItemChoice - 1];
+
+    trades.Add(new Trade
+    (
+      u.Email,
+      chosenItem.Name,
+      offeredItem.Name,
+      TradeStatus.Pending
+    ));
+
+    Console.WriteLine("Trade-förfrågan har skickats");
   }
 }
