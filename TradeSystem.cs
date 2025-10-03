@@ -12,6 +12,7 @@ public class TradeSystem
   public TradeSystem()
   {
     users.Add(new User("Jacob", "jake@", "pass"));
+    users.Add(new User("Kevin", "Kevv@", "pass"));
     items.Add(new Item("Vit Ps5", "Ett vit ps5, köpt när det kom ut", "Kevv@"));
   }
 
@@ -85,16 +86,36 @@ public class TradeSystem
 
   }
 
-  public void ShowItems()
+  public void ShowItems(IUser? active_user)
   {
     Console.Clear();
-    int i = 0;
+    if (active_user is not User u)
+    {
+      Console.WriteLine("Logga in eller skapa ett konto för att se items");
+      return;
+    }
+
+    //Skapar en lista "otheritems" som sparar alla items förutom den aktiva användaren.
+    List<Item> otheritems = new List<Item>();
     foreach (Item item in items)
     {
-      i += 1;
-      Console.WriteLine("[" + i + "] " + item.Name + "\n" + item.Description + "    " + item.Owner);
+      if (item.Owner != u.Email)
+      {
+        otheritems.Add(item);
+      }
+    }
+    if (otheritems.Count == 0)
+    {
+      Console.WriteLine("Det finns inga items att byta just nu");
+      return;
+    }
+    //Visar inte upp aktiva användarens items, men bara andra användares items
+    for (int i = 0; i < otheritems.Count; i++)
+    {
+      Console.WriteLine($"[{i + 1}] - {otheritems[i].Name} - {otheritems[i].Description} - (Ägare {otheritems[i].Owner})");
     }
     Console.ReadKey(true);
+
   }
 
   public void ShowMyItems(IUser? active_user)
@@ -113,6 +134,7 @@ public class TradeSystem
 
   public void MakeTrade(IUser? active_user)
   {
+    Console.Clear();
     if (active_user is not User u)
     {
       Console.WriteLine("Du måste vara inloggad för att göra en trade");
@@ -187,5 +209,14 @@ public class TradeSystem
     ));
 
     Console.WriteLine("Trade-förfrågan har skickats");
+  }
+
+  public void ActiveTrades()
+  {
+    Console.Clear();
+    foreach (Trade trades in trades)
+    {
+      Console.WriteLine($"{trades.Sender} vill byta sitt item: {trades.OfferedItem} mot ditt item: {trades.RequestedItem}. ");
+    }
   }
 }

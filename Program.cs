@@ -44,10 +44,14 @@ while (running)
             Console.ReadKey(true);
             break;
           case "2":
-            user.ShowItems();
+            user.ShowItems(active_user);
             user.MakeTrade(active_user);
             break;
 
+          case "3":
+            user.ActiveTrades();
+            Console.ReadKey(true);
+            break;
           case "4":
             active_user = null;
 
@@ -61,7 +65,7 @@ while (running)
           case "6":
             user.AddItem(active_user);
 
-            user.ShowItems();
+            // user.ShowItems(active_user);
             break;
         }
       }
