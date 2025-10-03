@@ -44,8 +44,32 @@ while (running)
             Console.ReadKey(true);
             break;
           case "2":
-            user.ShowItems(active_user);
-            user.MakeTrade(active_user);
+            Console.Clear();
+
+
+
+            while (true)
+            {
+              user.ShowItems(active_user);
+              Console.WriteLine("Vill du byta ett item?\n Skriv trade för att byta, eller tryck enter för att gå tillbaka.");
+              string input = Console.ReadLine().ToLower();
+              if (input == "trade")
+              {
+                Console.Clear();
+                user.MakeTrade(active_user);
+                break;
+              }
+              else if (input == "" || input == null)
+                break;
+              Console.Clear();
+
+
+
+            }
+
+
+
+
             break;
 
           case "3":
