@@ -14,6 +14,26 @@ public class TradeSystem
     users.Add(new User("Jacob", "jake@", "pass"));
     users.Add(new User("Kevin", "Kevv@", "pass"));
     items.Add(new Item("Vit Ps5", "Ett vit ps5, köpt när det kom ut", "Kevv@"));
+    items.Add(new Item("Xbox 360", "Ett vit xbox 360 från 2006, fungerar fortfarande", "jake@"));
+
+
+    trades.Add(new Trade
+    (
+      "jake@",
+      "Kevv@",
+      "Vit Ps5",
+      "Xbox 360",
+      TradeStatus.Pending
+    ));
+
+    trades.Add(new Trade
+    (
+      "jake@",
+      "Kevv@",
+      "Svart Ps5",
+      "Xbox 360",
+      TradeStatus.Completed
+    ));
   }
 
   //Inloggings funktion, gör så att användaren kan logga in på sitt konto.
@@ -196,6 +216,7 @@ public class TradeSystem
     trades.Add(new Trade
     (
       u.Email,
+      chosenItem.Owner,
       chosenItem.Name,
       offeredItem.Name,
       TradeStatus.Pending
@@ -204,12 +225,90 @@ public class TradeSystem
     Console.WriteLine("Trade-förfrågan har skickats");
   }
 
-  public void ActiveTrades()
+  public void ActiveTrades(IUser? active_user)
   {
-    Console.Clear();
-    foreach (Trade trades in trades)
+    int ChoosenIndex;
+    if (active_user is not User u)
     {
-      Console.WriteLine($"{trades.Sender} vill byta sitt item: {trades.OfferedItem} mot ditt item: {trades.RequestedItem}. ");
+      Console.WriteLine("Du kan inte ha några aktiva byten för du är inte en inloggad användare");
+      return;
     }
+
+    while (true)
+    {
+      int index = 0;
+      for (int i = 0; i < trades.Count; i++)
+      {
+        //Ser till så att det endast visas trades som inte är färdiga.
+        //Ser till att det visas bara trades som har skickats till den aktiva användaren.
+        if (trades[i].Status == TradeStatus.Pending && u.Email == trades[i].Receiver)
+        {
+          Console.WriteLine($"[{i + 1}] - {trades[i].Sender} vill byta sitt item: {trades[i].OfferedItem} mot ditt item: {trades[i].RequestedItem}");
+          index += 1;
+
+
+        }
+        else if (trades[i].Status == TradeStatus.Pending && u.Email != trades[i].Receiver || index == 0)
+        {
+          Console.WriteLine("Du har inga aktiva byten just nu.");
+          return;
+        }
+      }
+
+      Console.WriteLine("Välj en av dina aktiva trades för att kunna acceptera eller avböja, Eller tryck enter för att gå tillbaka");
+      string choosen = Console.ReadLine().ToLower();
+
+      if (!int.TryParse(choosen, out int choosenint) || choosenint < 1 || choosenint > index)
+      {
+        Console.Clear();
+      }
+      else if (int.TryParse(choosen, out choosenint) || choosenint > 1 || choosenint < index)
+      {
+        Console.Clear();
+        ChoosenIndex = choosenint;
+        break;
+      }
+      if (choosen == "" || choosen == null)
+        return;
+
+    }
+
+
+
+
+    Console.WriteLine("Om du vill acceptera detta bytet skriv (ja) om du inte accepterar skriv (nej)");
+    Console.WriteLine("Du kan alltid gå tillbaka genom att trycka enter");
+
+    while (true)
+    {
+      string input = Console.ReadLine().ToLower();
+      if (input == "ja")
+      {
+        Console.WriteLine("Byte accepterat");
+        trades[ChoosenIndex - 1].Status = TradeStatus.Accepted;
+        break;
+      }
+      else if (input == "nej")
+      {
+        Console.WriteLine("Byte inte accepterat");
+        trades[ChoosenIndex - 1].Status = TradeStatus.Denied;
+        break;
+      }
+      else if (input == "" || input == null)
+      {
+        return;
+      }
+    }
+
+
+
+
+    /*
+    foreach (Trade trade in trades)
+    {
+      Console.WriteLine($"{trade.Sender} vill byta sitt item: {trade.OfferedItem} mot ditt item: {trade.RequestedItem}.");
+
+    }
+    */
   }
 }

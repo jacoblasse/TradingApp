@@ -73,7 +73,7 @@ while (running)
             break;
 
           case "3":
-            user.ActiveTrades();
+            user.ActiveTrades(active_user);
             Console.ReadKey(true);
             break;
           case "4":
