@@ -234,68 +234,72 @@ public class TradeSystem
       return;
     }
 
-    while (true)
+    //Skapar en lista som sparar alla trades som är Pending och skickade till användaren
+    List<int> tradeIndex = new List<int>();
+
+    for (int i = 0; i < trades.Count; i++)
     {
-      int index = 0;
-      for (int i = 0; i < trades.Count; i++)
+      //Kollar efter trades som har Pending status och är skickade till användaren
+      if (trades[i].Status == TradeStatus.Pending && u.Email == trades[i].Receiver)
       {
-        //Ser till så att det endast visas trades som inte är färdiga.
-        //Ser till att det visas bara trades som har skickats till den aktiva användaren.
-        if (trades[i].Status == TradeStatus.Pending && u.Email == trades[i].Receiver)
-        {
-          Console.WriteLine($"[{i + 1}] - {trades[i].Sender} vill byta sitt item: {trades[i].OfferedItem} mot ditt item: {trades[i].RequestedItem}");
-          index += 1;
-
-
-        }
-        else if (trades[i].Status == TradeStatus.Pending && u.Email != trades[i].Receiver || index == 0)
-        {
-          Console.WriteLine("Du har inga aktiva byten just nu.");
-          return;
-        }
+        //Sparar informationen i listan
+        tradeIndex.Add(i);
       }
-
-      Console.WriteLine("Välj en av dina aktiva trades för att kunna acceptera eller avböja, Eller tryck enter för att gå tillbaka");
-      string choosen = Console.ReadLine().ToLower();
-
-      if (!int.TryParse(choosen, out int choosenint) || choosenint < 1 || choosenint > index)
-      {
-        Console.Clear();
-      }
-      else if (int.TryParse(choosen, out choosenint) || choosenint > 1 || choosenint < index)
-      {
-        Console.Clear();
-        ChoosenIndex = choosenint;
-        break;
-      }
-      if (choosen == "" || choosen == null)
-        return;
-
     }
 
-    Console.WriteLine("Om du vill acceptera detta bytet skriv (ja) om du inte accepterar skriv (nej)");
-    Console.WriteLine("Du kan alltid gå tillbaka genom att trycka enter");
+    //Kollar ifall det finns några trades som sparades i listan
+    //Ifall inga trades sparades betyder det att det inte finns några skickade byten till den aktiva användaren.
+    if (tradeIndex.Count == 0)
+    {
+      Console.WriteLine("Du har inga aktiva byten just nu");
 
+      //Skickar tillbaka användaren till vart funktionen blev kallad på ifrån.
+      return;
+    }
+
+
+    for (int i = 0; i < tradeIndex.Count; i++)
+    {
+      int tradeidx = tradeIndex[i];
+      Console.WriteLine($"[{i + 1}] - {trades[tradeidx].Sender} vill byta sitt item: {trades[tradeidx].OfferedItem} mot ditt item: {trades[tradeidx].RequestedItem}");
+    }
+    Console.WriteLine("Välj en av dina aktiva trades för att kunna acceptera eller avböja, Eller tryck enter för att gå tillbaka");
+    string input = Console.ReadLine();
+    if (input == null || input == "")
+    {
+      return;
+    }
+
+    if (!int.TryParse(input, out int choice) || choice < 1 || choice > tradeIndex.Count)
+    {
+      Console.WriteLine("fel val");
+      return;
+    }
+
+    int selectedTradeIndex = tradeIndex[choice - 1];
+
+    Console.WriteLine("Vill du acceptera bytet? Skriv (ja) för att acceptera, (nej) för att avböja, eller tryck enter för att gå tillbaka");
     while (true)
     {
-      string input = Console.ReadLine().ToLower();
-      if (input == "ja")
+      string answer = Console.ReadLine().ToLower();
+      if (answer == "ja")
       {
+        trades[selectedTradeIndex].Status = TradeStatus.Accepted;
         Console.WriteLine("Byte accepterat");
-        trades[ChoosenIndex - 1].Status = TradeStatus.Accepted;
         break;
       }
-      else if (input == "nej")
+      else if (answer == "nej")
       {
-        Console.WriteLine("Byte inte accepterat");
-        trades[ChoosenIndex - 1].Status = TradeStatus.Denied;
+        trades[selectedTradeIndex].Status = TradeStatus.Denied;
+        Console.WriteLine("Byte avböjt");
         break;
       }
-      else if (input == "" || input == null)
+      else if (answer == null || answer == "")
       {
         return;
       }
     }
+
   }
 
   public void OfferedActiveTrades(IUser? active_user)
