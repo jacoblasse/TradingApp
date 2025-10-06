@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 
 namespace App;
@@ -33,6 +34,15 @@ public class TradeSystem
       "Svart Ps5",
       "Xbox 360",
       TradeStatus.Completed
+    ));
+
+    trades.Add(new Trade
+    (
+      "jake@",
+      "Kevv@",
+      "rosa Ps5",
+      "Xbox 360",
+      TradeStatus.Pending
     ));
   }
 
@@ -227,7 +237,6 @@ public class TradeSystem
 
   public void ReceivedActiveTrades(IUser? active_user)
   {
-    int ChoosenIndex;
     if (active_user is not User u)
     {
       Console.WriteLine("Du kan inte ha några aktiva byten för du är inte en inloggad användare");
@@ -311,66 +320,69 @@ public class TradeSystem
       return;
     }
 
-    while (true)
+    //Skapa lista med index för trades som användaren har skickat till någon och är pending
+    List<int> OfferedTradeIndex = new List<int>();
+
+
+    for (int i = 0; i < trades.Count; i++)
     {
-      int index = 0;
-      for (int i = 0; i < trades.Count; i++)
+      if (trades[i].Status == TradeStatus.Pending && u.Email == trades[i].Sender)
       {
-        if (trades[i].Status == TradeStatus.Pending && u.Email == trades[i].Sender)
-        {
-          Console.WriteLine($"[{i + 1}] - Du vill byta diit item: {trades[i].OfferedItem} mot {trades[i].Receiver} item: {trades[i].RequestedItem}");
-          index += 1;
-
-
-        }
-        else if (trades[i].Status == TradeStatus.Pending && u.Email != trades[i].Sender || index == 0)
-        {
-          Console.WriteLine("Det finns inga aktiva byten som du har skickat just nu.");
-          return;
-        }
+        OfferedTradeIndex.Add(i);
       }
-      Console.WriteLine("Vill du avbryta ett av dina trade offers?");
-      Console.WriteLine("Välj isåfall indexet av det bytet du vill avbryta.");
-
-      string choosen = Console.ReadLine().ToLower();
-
-      if (!int.TryParse(choosen, out int choosenint) || choosenint < 1 || choosenint > index)
-      {
-        Console.Clear();
-      }
-      else if (int.TryParse(choosen, out choosenint) || choosenint > 1 || choosenint < index)
-      {
-        Console.Clear();
-        ChoosenIndex = choosenint;
-        break;
-      }
-      if (choosen == "" || choosen == null)
-        return;
 
     }
 
-    Console.WriteLine("Om du är säker på att du vill avbryta detta bytet skriv (ja) om du inte vill skriv (nej)");
-    Console.WriteLine("Du kan alltid gå tillbaka genom att trycka enter");
+    if (OfferedTradeIndex.Count == 0)
+    {
+      Console.WriteLine("Det finns inga trades som du har skickat som är aktiva just nu");
+      return;
+    }
+
+    for (int i = 0; i < OfferedTradeIndex.Count; i++)
+    {
+      int tradeidx = OfferedTradeIndex[i];
+      Console.WriteLine($"[{i + 1}] - Du vill byta ditt item: {trades[tradeidx].OfferedItem} mot {trades[tradeidx].Receiver} item: {trades[tradeidx].RequestedItem}");
+    }
+    Console.WriteLine("Vill du avbryta ett av dina trade offers?");
+    Console.WriteLine("Välj isåfall indexet av det bytet du vill avbryta, eller tryck Enter för att gå tillbaka");
+
+    string input = Console.ReadLine();
+    if (input == null || input == "")
+    {
+      return;
+    }
+
+    if (!int.TryParse(input, out int choice) || choice < 1 || choice > OfferedTradeIndex.Count)
+    {
+      Console.WriteLine("fel val");
+      return;
+    }
+
+    int selectedTradeIndex = OfferedTradeIndex[choice - 1];
+
+    Console.WriteLine("Om du är säker på att du vill avbryta bytet skriv (ja), om du inte vill skriv (nej). Du kan alltid gå tillbaka genom att trycka Enter.");
 
     while (true)
     {
-      string input = Console.ReadLine().ToLower();
-      if (input == "ja")
+      string confirm = Console.ReadLine().ToLower();
+      if (confirm == "ja")
       {
+        trades[selectedTradeIndex].Status = TradeStatus.Canceled;
         Console.WriteLine("Byte avbrutet");
-        trades[ChoosenIndex - 1].Status = TradeStatus.Canceled;
         break;
       }
-      else if (input == "nej")
+      else if (confirm == "nej")
       {
         Console.WriteLine("Byte inte avbrutet");
         break;
       }
-      else if (input == "" || input == null)
+      else if (confirm == null || confirm == "")
       {
         return;
       }
     }
+
   }
 
   public void CompletedTrades(IUser? active_user)
