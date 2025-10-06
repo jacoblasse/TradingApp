@@ -368,4 +368,27 @@ public class TradeSystem
       }
     }
   }
+
+  public void CompletedTrades(IUser? active_user)
+  {
+    if (active_user is not User u)
+    {
+      Console.WriteLine("Du måste vara inloggad för att se avklarade byten");
+      return;
+    }
+
+    bool found = false;
+    for (int i = 0; i < trades.Count; i++)
+    {
+      if ((trades[i].Sender == u.Email || trades[i].Receiver == u.Email) && (trades[i].Status == TradeStatus.Accepted || trades[i].Status == TradeStatus.Completed || trades[i].Status == TradeStatus.Denied))
+      {
+        found = true;
+        Console.WriteLine($"Byte mellan: {trades[i].Sender} och: {trades[i].Receiver}: {trades[i].OfferedItem} mot: {trades[i].RequestedItem}  | Status: {trades[i].Status}");
+      }
+    }
+    if (found == false)
+    {
+      Console.WriteLine("Du har inga avklarade byten");
+    }
+  }
 }
