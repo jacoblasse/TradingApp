@@ -12,38 +12,43 @@ public class TradeSystem
 
   public TradeSystem()
   {
-    users.Add(new User("Jacob", "jake@", "pass"));
-    users.Add(new User("Kevin", "Kevv@", "pass"));
-    items.Add(new Item("Vit Ps5", "Ett vit ps5, köpt när det kom ut", "Kevv@"));
-    items.Add(new Item("Xbox 360", "Ett vit xbox 360 från 2006, fungerar fortfarande", "jake@"));
 
 
-    trades.Add(new Trade
-    (
-      "jake@",
-      "Kevv@",
-      "Vit Ps5",
-      "Xbox 360",
-      TradeStatus.Pending
-    ));
+    string[] users_csv = File.ReadAllLines("users.csv");
+    foreach (string user_data in users_csv)
+    {
+      string[] split_user_data = user_data.Split("|");
+      if (split_user_data.Length >= 3)
+      {
+        users.Add(new User(split_user_data[0], split_user_data[1], split_user_data[2]));
+      }
+    }
 
-    trades.Add(new Trade
-    (
-      "jake@",
-      "Kevv@",
-      "Svart Ps5",
-      "Xbox 360",
-      TradeStatus.Completed
-    ));
+    string[] items_csv = File.ReadAllLines("items.csv");
+    foreach (string item_data in items_csv)
+    {
+      string[] split_item_data = item_data.Split("|");
+      if (split_item_data.Length >= 2)
+      {
+        items.Add(new Item(split_item_data[0], split_item_data[1], split_item_data[2]));
+      }
+    }
 
-    trades.Add(new Trade
-    (
-      "jake@",
-      "Kevv@",
-      "rosa Ps5",
-      "Xbox 360",
-      TradeStatus.Pending
-    ));
+    string[] trades_csv = File.ReadAllLines("trades.csv");
+    foreach (string trade_data in trades_csv)
+    {
+      string[] split_trade_data = trade_data.Split("|");
+      if (split_trade_data.Length >= 5)
+      {
+        TradeStatus status;
+        if (!Enum.TryParse(split_trade_data[4], out status))
+        {
+          // Om status inte kan tolkas, sätt till Pending eller annan standard
+          status = TradeStatus.Pending;
+        }
+        trades.Add(new Trade(split_trade_data[0], split_trade_data[1], split_trade_data[2], split_trade_data[3], status));
+      }
+    }
   }
 
   //Inloggings funktion, gör så att användaren kan logga in på sitt konto.
@@ -95,6 +100,7 @@ public class TradeSystem
     _password = Console.ReadLine();
 
     users.Add(new User(name, email, _password));
+    File.AppendAllLines("users.csv", new[] { $"{name}|{email}|{_password}" });
 
   }
 
@@ -111,6 +117,7 @@ public class TradeSystem
       description = Console.ReadLine();
 
       items.Add(new Item(name, description, u.Email));
+      File.AppendAllLines("items.csv", new[] { $"{name}|{description}|{u.Email}" });
     }
 
 
@@ -245,6 +252,8 @@ public class TradeSystem
       TradeStatus.Pending
     ));
 
+    File.AppendAllLines("trades.csv", new[] { $"{u.Email}|{chosenItem.Owner}|{chosenItem.Name}|{offeredItem.Name}|{TradeStatus.Pending}" });
+
     Console.WriteLine("Trade-förfrågan har skickats");
   }
 
@@ -307,6 +316,16 @@ public class TradeSystem
       if (answer == "ja")
       {
         trades[selectedTradeIndex].Status = TradeStatus.Accepted;
+
+        // Spara ändrade trades till trades.csv
+        List<string> tradeRows = new List<string>();
+        foreach (Trade currentTrade in trades)
+        {
+          string row = currentTrade.Sender + "|" + currentTrade.Receiver + "|" + currentTrade.RequestedItem + "|" + currentTrade.OfferedItem + "|" + currentTrade.Status;
+          tradeRows.Add(row);
+        }
+        File.WriteAllLines("trades.csv", tradeRows);
+
         TradeAccepted(trades[selectedTradeIndex]);
         Console.WriteLine("Byte accepterat");
         break;
@@ -383,6 +402,16 @@ public class TradeSystem
       if (confirm == "ja")
       {
         trades[selectedTradeIndex].Status = TradeStatus.Canceled;
+
+        // Spara ändrade trades till trades.csv
+        List<string> tradeRows = new List<string>();
+        foreach (Trade currentTrade in trades)
+        {
+          string row = currentTrade.Sender + "|" + currentTrade.Receiver + "|" + currentTrade.RequestedItem + "|" + currentTrade.OfferedItem + "|" + currentTrade.Status;
+          tradeRows.Add(row);
+        }
+        File.WriteAllLines("trades.csv", tradeRows);
+
         Console.WriteLine("Byte avbrutet");
         break;
       }
@@ -455,5 +484,21 @@ public class TradeSystem
     requesteditem.Owner = temporaryOwner;
 
     trade.Status = TradeStatus.Completed;
+
+    List<string> itemRows = new List<string>();
+    foreach (Item item in items)
+    {
+      string row = item.Name + "|" + item.Description + "|" + item.Owner;
+      itemRows.Add(row);
+    }
+    File.WriteAllLines("items.csv", itemRows);
+
+    List<string> tradeRows = new List<string>();
+    foreach (Trade currentTrade in trades)
+    {
+      string row = currentTrade.Sender + "|" + currentTrade.Receiver + "|" + currentTrade.RequestedItem + "|" + currentTrade.OfferedItem + "|" + currentTrade.Status;
+      tradeRows.Add(row);
+    }
+    File.WriteAllLines("trades.csv", tradeRows);
   }
 }
