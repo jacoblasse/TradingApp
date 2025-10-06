@@ -5,6 +5,7 @@ namespace App
     Pending,
     Accepted,
     Denied,
+    Canceled,
     Completed
   }
 

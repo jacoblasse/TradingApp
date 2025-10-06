@@ -73,8 +73,36 @@ while (running)
             break;
 
           case "3":
-            user.ActiveTrades(active_user);
-            Console.ReadKey(true);
+            bool r = true;
+            while (r)
+            {
+              Console.Clear();
+              Console.WriteLine("1. Se aktivt byte skickat till dig\n2. Se aktiva byte som du har skickat\n3. Se dina färdiga byten.\n 4. Gå tillbaka till huvudmeny.\n");
+              switch (Console.ReadLine())
+              {
+
+                case "1":
+                  user.ReceivedActiveTrades(active_user);
+                  Console.ReadKey(true);
+                  break;
+
+                case "2":
+                  user.OfferedActiveTrades(active_user);
+
+                  break;
+
+                case "3":
+
+                  break;
+
+                case "4":
+                  r = false;
+                  break;
+              }
+
+            }
+
+
             break;
           case "4":
             active_user = null;
@@ -88,8 +116,6 @@ while (running)
 
           case "6":
             user.AddItem(active_user);
-
-            // user.ShowItems(active_user);
             break;
         }
       }
