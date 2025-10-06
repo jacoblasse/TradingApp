@@ -36,7 +36,7 @@ while (running)
       while (active_user != null)
       {
         Console.Clear();
-        Console.WriteLine("1. Se mina grejer\n2. Kolla items\n 3. Se trade requests\n4. Logga ut\n5. Avsluta\n6. Lägg till items");
+        Console.WriteLine("1. Se mina grejer\n2. Kolla items\n3. Se trade requests\n4. Logga ut\n5. Avsluta\n6. Lägg till items");
         switch (Console.ReadLine())
         {
           case "1":
@@ -77,7 +77,7 @@ while (running)
             while (r)
             {
               Console.Clear();
-              Console.WriteLine("1. Se aktivt byte skickat till dig\n2. Se aktiva byte som du har skickat\n3. Se dina färdiga byten.\n 4. Gå tillbaka till huvudmeny.\n");
+              Console.WriteLine("1. Se aktivt byte skickat till dig\n2. Se aktiva byte som du har skickat\n3. Se dina färdiga byten.\n4. Gå tillbaka till huvudmeny.\n");
               switch (Console.ReadLine())
               {
 

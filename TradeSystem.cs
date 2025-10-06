@@ -157,10 +157,23 @@ public class TradeSystem
       if (active_user is User u && item.Owner == u.Email)
       {
         i += 1;
-        Console.WriteLine($"[{i}]\n{item.Name} \n{item.Description}");
+        Console.WriteLine($"[{i}] - {item.Name} - {item.Description}");
       }
-      else Console.WriteLine("Du har inga items på din profil\n Lägg till nya items?");
     }
+    if (i == 0)
+    {
+      Console.WriteLine("Du har inga items");
+      return;
+    }
+    if (i < 2)
+    {
+      Console.WriteLine($"Du har {i} item i ditt föråd");
+    }
+    else
+    {
+      Console.WriteLine($"Du har {i} items i ditt föråd");
+    }
+
   }
 
   public void MakeTrade(IUser? active_user)
