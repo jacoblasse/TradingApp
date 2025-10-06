@@ -294,6 +294,7 @@ public class TradeSystem
       if (answer == "ja")
       {
         trades[selectedTradeIndex].Status = TradeStatus.Accepted;
+        TradeAccepted(trades[selectedTradeIndex]);
         Console.WriteLine("Byte accepterat");
         break;
       }
@@ -406,5 +407,40 @@ public class TradeSystem
     {
       Console.WriteLine("Du har inga avklarade byten");
     }
+  }
+
+  public void TradeAccepted(Trade trade)
+  {
+    Item offereditem = null;
+    foreach (Item item in items)
+    {
+      if (item.Name == trade.OfferedItem && item.Owner == trade.Sender)
+      {
+        offereditem = item;
+        break;
+      }
+    }
+
+    Item requesteditem = null;
+    foreach (Item item in items)
+    {
+      if (item.Name == trade.RequestedItem && item.Owner == trade.Receiver)
+      {
+        requesteditem = item;
+        break;
+      }
+    }
+    if (offereditem == null || requesteditem == null)
+    {
+      Console.WriteLine("Kunde inte hitta items");
+      return;
+    }
+
+    string temporaryOwner = offereditem.Owner;
+
+    offereditem.Owner = requesteditem.Owner;
+    requesteditem.Owner = temporaryOwner;
+
+    trade.Status = TradeStatus.Completed;
   }
 }
