@@ -5,9 +5,12 @@ namespace App;
 
 public class TradeSystem
 {
+  // Lista för alla användare 
   public List<IUser> users = new List<IUser>();
+  // Lista för alla items 
   public List<Item> items = new List<Item>();
 
+  // Lista över alla trade-förfrågningar 
   public List<Trade> trades = new List<Trade>();
 
   public TradeSystem()
@@ -43,7 +46,7 @@ public class TradeSystem
         TradeStatus status;
         if (!Enum.TryParse(split_trade_data[4], out status))
         {
-          // Om status inte kan tolkas, sätt till Pending eller annan standard
+          // Om status inte kan läsas, sätt till Pending
           status = TradeStatus.Pending;
         }
         trades.Add(new Trade(split_trade_data[0], split_trade_data[1], split_trade_data[2], split_trade_data[3], status));
@@ -85,12 +88,15 @@ public class TradeSystem
     return null;
   }
 
+  //Funktion för att skapa konto.
   public void MakeAccount()
   {
+    //Skapar variabler för användare information.
     string name;
     string email;
     string _password;
 
+    //Sparar information som användare skriver in i variablerna.
     Console.Write("Namn: ");
     name = Console.ReadLine();
 
@@ -99,15 +105,20 @@ public class TradeSystem
 
     _password = Console.ReadLine();
 
+    //Lägger till information från variablerna ovan, så det sparas i User klassen i User.cs.
     users.Add(new User(name, email, _password));
+
+    //Lägger till samma information i users.csv filen så att information är sparad även efter programmet stängs av.
     File.AppendAllLines("users.csv", new[] { $"{name}|{email}|{_password}" });
 
   }
 
+  //Lägga till item funktion
   public void AddItem(IUser? active_user)
   {
     string name;
     string description;
+    //Kollar ifall aktiva användaren är en User och skapar variabel med information från klassen User
     if (active_user is User u)
     {
       Console.Write("Namn på ditt Item: ");
@@ -116,31 +127,40 @@ public class TradeSystem
       Console.Write("Skriv en beskrivning om ditt Item: ");
       description = Console.ReadLine();
 
+      //Lägger till information från variablerna ovan, så det sparas i Item klassen i Item.cs
       items.Add(new Item(name, description, u.Email));
+      //Lägger till samma information i items.csv filen så att information är sparad även efter programmet stängs av.
       File.AppendAllLines("items.csv", new[] { $"{name}|{description}|{u.Email}" });
     }
 
 
   }
-
+  //Skapar showitem funktion som visar alla items som inte tillhör aktiv användare med en List<Item> typ så jag kan spara informationen och använda i en annan funktion senare i koden.
   public List<Item> ShowItems(IUser? active_user)
   {
 
+    //Kollar ifall användaren inte är en User och skapar en variabel u med information från klassen User i User.cs
     if (active_user is not User u)
     {
       Console.WriteLine("Logga in eller skapa ett konto för att se items");
+
+      //Skickar tillbaka användaren till vart funktionen blev kallad ifrån utan någon information.
       return null;
     }
 
     //Skapar en lista "otheritems" som sparar alla items förutom den aktiva användaren.
     List<Item> otheritems = new List<Item>();
+
+    //gör en foreach som kollar igenom all information från klassen Item sparad i listan items.
     foreach (Item item in items)
     {
+      //Ifall ägaren av ett item inte är samma som aktiva användaren så spara all information om det specifika itemet i listan otheritems.
       if (item.Owner != u.Email)
       {
         otheritems.Add(item);
       }
     }
+    //Om det inte finns några items sparade i other items, så finns det inga items som användaren kan byta mot.
     if (otheritems.Count == 0)
     {
       Console.WriteLine("Det finns inga items att byta just nu");
@@ -156,11 +176,15 @@ public class TradeSystem
 
   }
 
+  //Skapar funktion som visar aktiva användarens items.
   public void ShowMyItems(IUser? active_user)
   {
+    //skapar en int i som ska hålla koll på hur många items användaren har, den har ingen annan funktion.
     int i = 0;
     foreach (Item item in items)
     {
+      //Kollar ifall den aktiva användaren är en User och skapar variabel u med information från User klassen i User.cs.
+      //Kollar så att den som äger itemet är samma person som är inloggad.
       if (active_user is User u && item.Owner == u.Email)
       {
         i += 1;
