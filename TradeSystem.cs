@@ -384,10 +384,6 @@ public class TradeSystem
     //Sparar det valda trade requestet i selectedTradeIndex variabelen.
     int selectedTradeIndex = tradeIndex[choice - 1];
 
-    //Skapar en variabel som sparar den valda traden så jag inte måste skriva trades[selectedTradeIndex] flera gånger.
-    Trade currentTrade = trades[selectedTradeIndex];
-
-
     //Ber användaren att acceptera eller avböja bytet, eller tryck enter för att gå tillbaka.
     Console.WriteLine("Vill du acceptera bytet? Skriv (ja) för att acceptera, (nej) för att avböja, eller tryck enter för att gå tillbaka");
     while (true)
@@ -397,7 +393,7 @@ public class TradeSystem
       if (answer == "ja")
       {
         //Ändrar statusen på bytet till Accepted
-        currentTrade.Status = TradeStatus.Accepted;
+        trades[selectedTradeIndex].Status = TradeStatus.Accepted;
 
         //Skapar en lista med alla trades för att kunna skriva över hela filen med den nya informationen.
         //Annars skulle bara den accepterade tradens status ändras i filen och alla andra trades skulle försvinna.
@@ -494,8 +490,6 @@ public class TradeSystem
     //Sparar det valda trade requestet i selectedTradeIndex variabelen.
     int selectedTradeIndex = OfferedTradeIndex[choice - 1];
 
-    //Skapar en variabel som sparar den valda traden. Så jag inte måste skriva trades[selectedTradeIndex] flera gånger.
-    Trade currentTrade = trades[selectedTradeIndex];
 
     Console.WriteLine("Om du är säker på att du vill avbryta bytet skriv (ja), om du inte vill skriv (nej). Du kan alltid gå tillbaka genom att trycka Enter.");
 
@@ -506,7 +500,7 @@ public class TradeSystem
       //Avbryter traden.
       if (confirm == "ja")
       {
-        currentTrade.Status = TradeStatus.Canceled;
+        trades[selectedTradeIndex].Status = TradeStatus.Canceled;
 
         //Skapar en lista med alla trades för att kunna skriva över hela filen med den nya informationen.
         //Annars skulle bara den avbrutna tradens status ändras i filen och alla andra trades skulle försvinna.
